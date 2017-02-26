@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/recyclerViewHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/recyclerViewItemCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"/>
+
+        <ImageView
+            android:id="@+id/recyclerViewItemIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_toEndOf="@+id/recyclerViewItemCheckbox"
+            android:layout_centerVertical="true"/>
+
+        <RelativeLayout
+            android:id="@+id/recyclerViewTitleLayout"
+            android:layout_width="250dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_toEndOf="@+id/recyclerViewItemIcon"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/recyclerViewItemName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="name"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/recyclerViewItemDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/recyclerViewItemName"
+                tools:text="date"/>
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/recyclerViewItemDeleteButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_clear_black_24dp"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/recyclerViewDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recyclerViewHeader"
+        android:layout_alignParentRight="true"
+        tools:text="description"/>
+
+</RelativeLayout>
