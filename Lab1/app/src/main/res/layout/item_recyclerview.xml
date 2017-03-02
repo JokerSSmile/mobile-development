@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:paddingStart="@dimen/activity_vertical_margin"
+              android:paddingEnd="@dimen/activity_vertical_margin"
+              android:paddingTop="@dimen/activity_vertical_margin"
+              android:paddingBottom="@dimen/activity_vertical_margin">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:tools="http://schemas.android.com/tools"
                     android:id="@+id/recyclerViewHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+        >
 
         <CheckBox
             android:id="@+id/recyclerViewItemCheckbox"
@@ -29,7 +33,7 @@
 
         <RelativeLayout
             android:id="@+id/recyclerViewTitleLayout"
-            android:layout_width="250dp"
+            android:layout_width="240dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_toEndOf="@+id/recyclerViewItemIcon"
@@ -40,7 +44,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="name"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
 
             <TextView
                 android:id="@+id/recyclerViewItemDate"
@@ -65,8 +71,7 @@
         android:id="@+id/recyclerViewDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/recyclerViewHeader"
-        android:layout_alignParentRight="true"
-        tools:text="description"/>
+        tools:text="description"
+        />
 
-</RelativeLayout>
+</LinearLayout >

@@ -1,23 +1,50 @@
 package patrushevoleg.ru.lab2;
 
-import android.text.format.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
-public class Record {
+class Record {
 
-    public enum Priority {MAX, LOW, NORMAL}
+    public enum Priority {
+        LOW,
+        NORMAL,
+        MAX;
 
-    private String name;
+        public static Priority fromInteger(int x) {
+            switch(x) {
+                case 0:
+                    return LOW;
+                case 1:
+                    return NORMAL;
+                case 2:
+                    return MAX;
+            }
+            return null;
+        }
+    }
+
+    private String title;
     private Priority priority;
     private String description;
-    private DateFormat date;
+    private Date date;
     private boolean isDone;
 
-    public DateFormat getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(DateFormat date) {
+    public void setDate(Date date) {
         this.date = date;
+    }
+
+    public void setDate(String date) {
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
+            this.date = format.parse(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getDescription() {
@@ -36,26 +63,30 @@ public class Record {
         isDone = done;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String name) {
+        this.title = name;
     }
 
     public Priority getPriority() {
         return priority;
     }
 
-    public void setPriority(Priority priority) {
+    public void setPriority(Priority priority){
         this.priority = priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = Priority.fromInteger(priority);
     }
 
     public Record copy(){
         Record copy = new Record();
         copy.setPriority(priority);
-        copy.setName(name);
+        copy.setTitle(title);
         copy.setDate(date);
         copy.setDescription(description);
         copy.setDone(isDone);

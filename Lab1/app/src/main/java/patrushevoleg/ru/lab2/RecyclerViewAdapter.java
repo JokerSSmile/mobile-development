@@ -1,6 +1,6 @@
 package patrushevoleg.ru.lab2;
 
-import android.icu.text.DateFormat;
+import android.support.test.espresso.core.deps.guava.collect.ComparisonChain;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -45,11 +47,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 break;
         }
         viewHolder.icon.setImageResource(iconResourceId);
-        viewHolder.name.setText(record.getName());
-        viewHolder.description.setText(i + "kek" + i);
-        viewHolder.date.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date()));
-        viewHolder.isDone.setChecked(true);
+        viewHolder.name.setText(record.getTitle());
+        viewHolder.description.setText(record.getDescription());
+        viewHolder.date.setText(new SimpleDateFormat("dd MMM yyyy", Locale.US).format(record.getDate()));
+        viewHolder.isDone.setChecked(record.isDone());
         viewHolder.deleteButtonListener.setRecord(record);
+        viewHolder.checkBoxListener.setRecord(record);
+
+        sort();
     }
 
     @Override
@@ -59,8 +64,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private void delete(Record record) {
         int position = records.indexOf(record);
+        if (position < 0) {
+            return;
+        }
         records.remove(position);
         notifyItemRemoved(position);
+    }
+
+    private void sort() {
+        Collections.sort(records, new Comparator<Record>() {
+            @Override
+            public int compare(Record lhs, Record rhs) {
+                return ComparisonChain.start().compare(lhs.isDone(), rhs.isDone()).compare(rhs.getPriority(), lhs.getPriority()).compare(rhs.getDate(), lhs.getDate()).result();
+            }
+        });
+    }
+
+    public void add(Record record) {
+        records.add(record);
+        sort();
+        notifyItemInserted(records.indexOf(record));
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -72,8 +95,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private TextView date;
         private CheckBox isDone;
         private DeleteButtonListener deleteButtonListener;
+        private CheckBoxListener checkBoxListener;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.recyclerViewItemName);
             icon = (ImageView) itemView.findViewById(R.id.recyclerViewItemIcon);
@@ -83,6 +107,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             deleteButton = (Button) itemView.findViewById(R.id.recyclerViewItemDeleteButton);
             deleteButtonListener = new DeleteButtonListener();
             deleteButton.setOnClickListener(deleteButtonListener);
+            checkBoxListener = new CheckBoxListener();
+            isDone.setOnClickListener(checkBoxListener);
         }
     }
 
@@ -92,9 +118,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         public void onClick(View v) {
             delete(record);
+            sort();
         }
 
-        public void setRecord(Record record) {
+        void setRecord(Record record) {
+            this.record = record;
+        }
+    }
+
+    private class CheckBoxListener implements View.OnClickListener {
+        private Record record;
+
+        @Override
+        public void onClick(View v) {
+            record.setDone(!record.isDone());
+            notifyDataSetChanged();
+            sort();
+        }
+
+        void setRecord(Record record) {
             this.record = record;
         }
     }
