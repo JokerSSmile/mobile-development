@@ -14,8 +14,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -24,6 +26,9 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     EditText showPicker;
     Button addItem;
     Calendar calendar;
+    EditText addTitle;
+    Spinner addPriority;
+    EditText addDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,16 +37,34 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        Spinner spinner = (Spinner) findViewById(R.id.prioritySpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.priority, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
         showPicker = (EditText) findViewById(R.id.showDatePicker);
         showPicker.setOnClickListener(this);
         addItem = (Button) findViewById(R.id.addItemBtn);
         addItem.setOnClickListener(this);
+
+        addTitle = (EditText) findViewById(R.id.addTitle);
+        addPriority = (Spinner) findViewById(R.id.prioritySpinner);
+        addDescription = (EditText) findViewById(R.id.addDescription);
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.getString("title") != null)
+        {
+            addTitle.setText(bundle.getString("title"));
+            showPicker.setText(bundle.getString("date"));
+            addPriority.setSelection(bundle.getInt("priority"));
+            addDescription.setText(bundle.getString("description"));
+            addItem.setText("Save");
+            Date calendarDate = updateLabel(bundle.getString("date"));
+            calendar = Calendar.getInstance();
+            calendar.set(calendarDate.getYear(), calendarDate.getMonth(), calendarDate.getDate());
+        }
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.priority, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        addPriority.setAdapter(adapter);
+
+
     }
 
     @Override
@@ -49,18 +72,14 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
         switch (v.getId()) {
             case R.id.addItemBtn:
-                EditText addTitle = (EditText) findViewById(R.id.addTitle);
-                EditText addDate = (EditText) findViewById(R.id.showDatePicker);
-                Spinner addPriority = (Spinner) findViewById(R.id.prioritySpinner);
-                EditText addDescription = (EditText) findViewById(R.id.addDescription);
 
-                if (!areElementsFilled(addTitle, addDate)) {
+                if (!areElementsFilled(addTitle, showPicker)) {
                     break;
                 }
 
                 Intent intent = new Intent();
                 intent.putExtra("title", addTitle.getText().toString());
-                intent.putExtra("date", addDate.getText().toString());
+                intent.putExtra("date", showPicker.getText().toString());
                 intent.putExtra("priority", String.valueOf(addPriority.getSelectedItemPosition()));
                 intent.putExtra("description", addDescription.getText().toString());
                 setResult(1, intent);
@@ -104,5 +123,19 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         showPicker.setText(sdf.format(calendar.getTime()));
+    }
+
+    private Date updateLabel(String date) {
+
+        DateFormat originalFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        DateFormat targetFormat = new SimpleDateFormat("dd MMM yyyy");
+        Date d = null;
+        try {
+            d = originalFormat.parse(date);
+        } catch (Exception ignored) {}
+        String formattedDate = targetFormat.format(d);
+
+        showPicker.setText(formattedDate);
+        return d;
     }
 }

@@ -9,12 +9,11 @@
               android:paddingTop="@dimen/activity_vertical_margin"
               android:paddingBottom="@dimen/activity_vertical_margin">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    android:id="@+id/recyclerViewHeader"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+    <RelativeLayout
+        android:id="@+id/recyclerViewHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         >
 
         <CheckBox
@@ -27,26 +26,26 @@
             android:id="@+id/recyclerViewItemIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_margin="3dp"
-            android:layout_toEndOf="@+id/recyclerViewItemCheckbox"
-            android:layout_centerVertical="true"/>
+            android:layout_toEndOf="@+id/recyclerViewItemCheckbox"/>
 
         <RelativeLayout
             android:id="@+id/recyclerViewTitleLayout"
             android:layout_width="240dp"
             android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/recyclerViewItemIcon"
-            android:layout_centerVertical="true">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/recyclerViewItemName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="name"
-                android:textSize="20sp"
+                android:ellipsize="end"
                 android:maxLines="1"
-                android:ellipsize="end"/>
+                android:textSize="20sp"
+                tools:text="name"/>
 
             <TextView
                 android:id="@+id/recyclerViewItemDate"

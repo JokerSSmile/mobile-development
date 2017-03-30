@@ -1,5 +1,8 @@
 package patrushevoleg.ru.lab2;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.support.test.espresso.core.deps.guava.collect.ComparisonChain;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +12,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.Console;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,9 +25,11 @@ import java.util.Locale;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
     private List<Record> records;
+    private Activity context;
 
-    public RecyclerViewAdapter(List<Record> records) {
+    public RecyclerViewAdapter(List<Record> records, Activity context) {
         this.records = records;
+        this.context = context;
     }
 
     @Override
@@ -34,26 +41,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         Record record = records.get(i);
-        int iconResourceId = 0;
+        int iconPriority = 0;
         switch (record.getPriority()) {
             case LOW:
-                iconResourceId = R.drawable.low_priority;
+                iconPriority = R.drawable.low_priority;
                 break;
             case MAX:
-                iconResourceId = R.drawable.max_priority;
+                iconPriority = R.drawable.max_priority;
                 break;
             case NORMAL:
-                iconResourceId = R.drawable.normal_priority;
+                iconPriority = R.drawable.normal_priority;
                 break;
         }
-        viewHolder.icon.setImageResource(iconResourceId);
+        viewHolder.icon.setImageResource(iconPriority);
         viewHolder.name.setText(record.getTitle());
         viewHolder.description.setText(record.getDescription());
-        viewHolder.date.setText(new SimpleDateFormat("dd MMM yyyy", Locale.US).format(record.getDate()));
+        viewHolder.date.setText(new SimpleDateFormat("dd MMM yyyy", Locale.US).format(record.getDate() == null ? new Date("12 Mar 2017") : record.getDate()));
         viewHolder.isDone.setChecked(record.isDone());
         viewHolder.deleteButtonListener.setRecord(record);
         viewHolder.checkBoxListener.setRecord(record);
-
+        viewHolder.itemClickListener.setRecord(record);
+        viewHolder.itemView.setOnClickListener(viewHolder.itemClickListener);
         sort();
     }
 
@@ -82,7 +90,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public void add(Record record) {
         records.add(record);
-        sort();
+        //sort();
         notifyItemInserted(records.indexOf(record));
     }
 
@@ -94,8 +102,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private TextView description;
         private TextView date;
         private CheckBox isDone;
-        private DeleteButtonListener deleteButtonListener;
-        private CheckBoxListener checkBoxListener;
+        CheckBoxListener checkBoxListener;
+        DeleteButtonListener deleteButtonListener;
+        OnItemClickListener itemClickListener;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -109,6 +118,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             deleteButton.setOnClickListener(deleteButtonListener);
             checkBoxListener = new CheckBoxListener();
             isDone.setOnClickListener(checkBoxListener);
+            itemClickListener = new OnItemClickListener();
         }
     }
 
@@ -134,6 +144,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             record.setDone(!record.isDone());
             notifyDataSetChanged();
             sort();
+        }
+
+        void setRecord(Record record) {
+            this.record = record;
+        }
+    }
+
+    private class OnItemClickListener implements View.OnClickListener {
+        private Record record;
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(context, AddItemActivity.class);
+            intent.putExtra("title", record.getTitle());
+            intent.putExtra("date", record.getDate().toString());
+            intent.putExtra("priority", record.getPriorityInt());
+            intent.putExtra("description", record.getDescription());
+            context.startActivityForResult(intent, 2);
+            intent.getExtras();
         }
 
         void setRecord(Record record) {

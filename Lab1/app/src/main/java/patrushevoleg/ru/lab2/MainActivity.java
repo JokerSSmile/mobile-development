@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import java.text.SimpleDateFormat;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     JsonAdapter jsonAdapter;
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         jsonAdapter.ParseJSON(this);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        adapter = new RecyclerViewAdapter(jsonAdapter.getRecords());
+        adapter = new RecyclerViewAdapter(jsonAdapter.getRecords(), this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
@@ -70,12 +72,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println(requestCode);
         if (data == null) {
             return;
         }
         Record record = new Record();
         record.setTitle(data.getStringExtra("title"));
-        record.setDate(data.getStringExtra("date"));
+        record.setDate(data.getStringExtra("date") == null ? new SimpleDateFormat("dd MMM yyyy").format("21 Mar 2017") : data.getStringExtra("date"));
         record.setPriority(Integer.parseInt(data.getStringExtra("priority")));
         record.setDescription(data.getStringExtra("description"));
         adapter.add(record);

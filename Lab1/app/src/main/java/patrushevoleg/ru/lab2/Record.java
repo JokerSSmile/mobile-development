@@ -75,6 +75,10 @@ class Record {
         return priority;
     }
 
+    public int getPriorityInt() {
+        return priority.ordinal();
+    }
+
     public void setPriority(Priority priority){
         this.priority = priority;
     }
