@@ -38,6 +38,7 @@ class JsonAdapter {
 
             for (int i = 0; i < m_jArry.length(); i++) {
                 JSONObject jsonObject = m_jArry.getJSONObject(i);
+                String id = jsonObject.getString("id");
                 String title = jsonObject.getString("title");
                 String priority = jsonObject.getString("priority");
                 String date = jsonObject.getString("date");
@@ -45,6 +46,7 @@ class JsonAdapter {
                 String description = jsonObject.getString("description");
 
                 record = new Record();
+                record.setId(Long.parseLong(id));
                 record.setTitle(title);
                 record.setPriority(Integer.parseInt(priority));
                 record.setDate(stringToDate(date));
@@ -75,6 +77,7 @@ class JsonAdapter {
         for (Record record : records) {
             JSONObject obj = new JSONObject();
             try {
+                obj.put("id", record.getId());
                 obj.put("title", record.getTitle());
                 obj.put("priority", record.getPriority().ordinal());
                 obj.put("date", record.getDate());

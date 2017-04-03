@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -72,13 +73,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println(requestCode);
+
         if (data == null) {
             return;
         }
+
         Record record = new Record();
+        record.setId(data.getLongExtra("id", 11));
         record.setTitle(data.getStringExtra("title"));
-        record.setDate(data.getStringExtra("date") == null ? new SimpleDateFormat("dd MMM yyyy").format("21 Mar 2017") : data.getStringExtra("date"));
+        try {
+            record.setDate(new SimpleDateFormat("dd MMM yyyy", Locale.US).parse(data.getStringExtra("date")));
+        } catch (Exception ignored) {}
         record.setPriority(Integer.parseInt(data.getStringExtra("priority")));
         record.setDescription(data.getStringExtra("description"));
         adapter.add(record);

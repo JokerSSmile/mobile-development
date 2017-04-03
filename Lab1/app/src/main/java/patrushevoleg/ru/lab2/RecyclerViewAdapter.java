@@ -1,7 +1,6 @@
 package patrushevoleg.ru.lab2;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.test.espresso.core.deps.guava.collect.ComparisonChain;
 import android.support.v7.widget.RecyclerView;
@@ -14,11 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Console;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,13 +53,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         viewHolder.icon.setImageResource(iconPriority);
         viewHolder.name.setText(record.getTitle());
         viewHolder.description.setText(record.getDescription());
-        viewHolder.date.setText(new SimpleDateFormat("dd MMM yyyy", Locale.US).format(record.getDate() == null ? new Date("12 Mar 2017") : record.getDate()));
+        viewHolder.date.setText(new SimpleDateFormat("dd MMM yyyy", Locale.US).format(record.getDate()));
         viewHolder.isDone.setChecked(record.isDone());
         viewHolder.deleteButtonListener.setRecord(record);
         viewHolder.checkBoxListener.setRecord(record);
         viewHolder.itemClickListener.setRecord(record);
         viewHolder.itemView.setOnClickListener(viewHolder.itemClickListener);
-        sort();
+        //sort();
     }
 
     @Override
@@ -89,9 +86,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public void add(Record record) {
-        records.add(record);
+        int pos = getRecordPosition(record);
+        if (pos == -1) {
+            records.add(record);
+            notifyItemInserted(records.indexOf(record));
+        }
+        else {
+            records.set(pos, record);
+            notifyItemChanged(records.indexOf(record));
+        }
         //sort();
-        notifyItemInserted(records.indexOf(record));
+    }
+
+    private int getRecordPosition(Record record) {
+        for (Record rec : records){
+            if (rec.getId() == record.getId()) {
+                return records.indexOf(rec);
+            }
+        }
+        return -1;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -156,7 +169,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         @Override
         public void onClick(View v) {
+            Toast toast = Toast.makeText(context, String.valueOf(record.getId()), Toast.LENGTH_SHORT);
+            toast.show();
             Intent intent = new Intent(context, AddItemActivity.class);
+            intent.putExtra("id", record.getId());
             intent.putExtra("title", record.getTitle());
             intent.putExtra("date", record.getDate().toString());
             intent.putExtra("priority", record.getPriorityInt());

@@ -29,9 +29,11 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     EditText addTitle;
     Spinner addPriority;
     EditText addDescription;
+    long recordId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        recordId = 0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -46,9 +48,15 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         addPriority = (Spinner) findViewById(R.id.prioritySpinner);
         addDescription = (EditText) findViewById(R.id.addDescription);
 
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.priority, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        addPriority.setAdapter(adapter);
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && bundle.getString("title") != null)
         {
+            recordId = bundle.getLong("id");
             addTitle.setText(bundle.getString("title"));
             showPicker.setText(bundle.getString("date"));
             addPriority.setSelection(bundle.getInt("priority"));
@@ -56,15 +64,10 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
             addItem.setText("Save");
             Date calendarDate = updateLabel(bundle.getString("date"));
             calendar = Calendar.getInstance();
-            calendar.set(calendarDate.getYear(), calendarDate.getMonth(), calendarDate.getDate());
+            calendar.set(Calendar.DAY_OF_MONTH, calendarDate.getDay());
+            calendar.set(Calendar.MONTH, calendarDate.getMonth());
+            calendar.set(Calendar.YEAR, calendarDate.getYear());
         }
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.priority, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        addPriority.setAdapter(adapter);
-
-
     }
 
     @Override
@@ -76,8 +79,8 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                 if (!areElementsFilled(addTitle, showPicker)) {
                     break;
                 }
-
                 Intent intent = new Intent();
+                intent.putExtra("id", recordId == 0 ? System.currentTimeMillis() : recordId);
                 intent.putExtra("title", addTitle.getText().toString());
                 intent.putExtra("date", showPicker.getText().toString());
                 intent.putExtra("priority", String.valueOf(addPriority.getSelectedItemPosition()));
@@ -127,8 +130,9 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
     private Date updateLabel(String date) {
 
-        DateFormat originalFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
-        DateFormat targetFormat = new SimpleDateFormat("dd MMM yyyy");
+        String myFormat = "EEE MMM dd HH:mm:ss zzz yyyy";
+        DateFormat originalFormat = new SimpleDateFormat(myFormat, Locale.US);
+        DateFormat targetFormat = new SimpleDateFormat("dd MMM yyyy", Locale.US);
         Date d = null;
         try {
             d = originalFormat.parse(date);

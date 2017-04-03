@@ -24,11 +24,20 @@ class Record {
         }
     }
 
+    private long id;
     private String title;
     private Priority priority;
     private String description;
     private Date date;
     private boolean isDone;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public Date getDate() {
         return date;
