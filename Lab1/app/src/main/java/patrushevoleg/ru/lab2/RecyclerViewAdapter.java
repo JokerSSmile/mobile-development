@@ -2,6 +2,7 @@ package patrushevoleg.ru.lab2;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.test.espresso.core.deps.guava.collect.ComparisonChain;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,10 +24,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private List<Record> records;
     private Activity context;
+    private Record lastDelitedRecord;
 
     public RecyclerViewAdapter(List<Record> records, Activity context) {
         this.records = records;
         this.context = context;
+        lastDelitedRecord = null;
     }
 
     @Override
@@ -54,9 +57,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         viewHolder.name.setText(record.getTitle());
         viewHolder.description.setText(record.getDescription());
         viewHolder.date.setText(new SimpleDateFormat("dd MMM yyyy", Locale.US).format(record.getDate()));
-        viewHolder.isDone.setChecked(record.isDone());
+        //viewHolder.isDone.setChecked(record.isDone());
         viewHolder.deleteButtonListener.setRecord(record);
-        viewHolder.checkBoxListener.setRecord(record);
+        //viewHolder.checkBoxListener.setRecord(record);
         viewHolder.itemClickListener.setRecord(record);
         viewHolder.itemView.setOnClickListener(viewHolder.itemClickListener);
         //sort();
@@ -72,6 +75,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         if (position < 0) {
             return;
         }
+        lastDelitedRecord = records.get(position);
         records.remove(position);
         notifyItemRemoved(position);
     }
@@ -80,9 +84,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Collections.sort(records, new Comparator<Record>() {
             @Override
             public int compare(Record lhs, Record rhs) {
-                return ComparisonChain.start().compare(lhs.isDone(), rhs.isDone()).compare(rhs.getPriority(), lhs.getPriority()).compare(rhs.getDate(), lhs.getDate()).result();
+                return ComparisonChain.start().compare(rhs.getPriority(), lhs.getPriority()).compare(rhs.getDate(), lhs.getDate()).result();
             }
         });
+        notifyDataSetChanged();
     }
 
     public void add(Record record) {
@@ -95,7 +100,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             records.set(pos, record);
             notifyItemChanged(records.indexOf(record));
         }
-        //sort();
+        sort();
     }
 
     private int getRecordPosition(Record record) {
@@ -114,8 +119,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private Button deleteButton;
         private TextView description;
         private TextView date;
-        private CheckBox isDone;
-        CheckBoxListener checkBoxListener;
+        //private CheckBox isDone;
+        //CheckBoxListener checkBoxListener;
         DeleteButtonListener deleteButtonListener;
         OnItemClickListener itemClickListener;
 
@@ -125,12 +130,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             icon = (ImageView) itemView.findViewById(R.id.recyclerViewItemIcon);
             description = (TextView) itemView.findViewById(R.id.recyclerViewDescription);
             date = (TextView) itemView.findViewById(R.id.recyclerViewItemDate);
-            isDone = (CheckBox) itemView.findViewById(R.id.recyclerViewItemCheckbox);
+            //isDone = (CheckBox) itemView.findViewById(R.id.recyclerViewItemCheckbox);
             deleteButton = (Button) itemView.findViewById(R.id.recyclerViewItemDeleteButton);
             deleteButtonListener = new DeleteButtonListener();
             deleteButton.setOnClickListener(deleteButtonListener);
-            checkBoxListener = new CheckBoxListener();
-            isDone.setOnClickListener(checkBoxListener);
+            //checkBoxListener = new CheckBoxListener();
+            //isDone.setOnClickListener(checkBoxListener);
             itemClickListener = new OnItemClickListener();
         }
     }
@@ -142,6 +147,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public void onClick(View v) {
             delete(record);
             sort();
+            Snackbar snackbar = Snackbar.make(v, "Deleted", Snackbar.LENGTH_INDEFINITE).setAction("Cancel", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //System.out.println(lastDelitedRecord.getTitle());
+                    //records.add(lastDelitedRecord);
+                    //notifyItemInserted(records.indexOf(lastDelitedRecord));
+                    add(lastDelitedRecord);
+                    sort();
+                }
+            });
+            snackbar.setDuration(5000);
+            snackbar.show();
         }
 
         void setRecord(Record record) {
@@ -149,6 +166,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
+    /*
     private class CheckBoxListener implements View.OnClickListener {
         private Record record;
 
@@ -156,21 +174,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public void onClick(View v) {
             record.setDone(!record.isDone());
             notifyDataSetChanged();
-            sort();
+            //sort();
         }
 
         void setRecord(Record record) {
             this.record = record;
         }
     }
+    */
 
     private class OnItemClickListener implements View.OnClickListener {
         private Record record;
 
         @Override
         public void onClick(View v) {
-            Toast toast = Toast.makeText(context, String.valueOf(record.getId()), Toast.LENGTH_SHORT);
-            toast.show();
             Intent intent = new Intent(context, AddItemActivity.class);
             intent.putExtra("id", record.getId());
             intent.putExtra("title", record.getTitle());

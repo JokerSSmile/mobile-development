@@ -29,7 +29,6 @@ class Record {
     private Priority priority;
     private String description;
     private Date date;
-    private boolean isDone;
 
     public long getId() {
         return id;
@@ -64,14 +63,6 @@ class Record {
         this.description = description;
     }
 
-    public boolean isDone() {
-        return isDone;
-    }
-
-    public void setDone(boolean done) {
-        isDone = done;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -94,15 +85,5 @@ class Record {
 
     public void setPriority(Integer priority) {
         this.priority = Priority.fromInteger(priority);
-    }
-
-    public Record copy(){
-        Record copy = new Record();
-        copy.setPriority(priority);
-        copy.setTitle(title);
-        copy.setDate(date);
-        copy.setDescription(description);
-        copy.setDone(isDone);
-        return copy;
     }
 }

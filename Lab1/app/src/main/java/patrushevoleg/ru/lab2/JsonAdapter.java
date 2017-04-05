@@ -1,6 +1,5 @@
 package patrushevoleg.ru.lab2;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -42,7 +41,6 @@ class JsonAdapter {
                 String title = jsonObject.getString("title");
                 String priority = jsonObject.getString("priority");
                 String date = jsonObject.getString("date");
-                String isDone = jsonObject.getString("isDone");
                 String description = jsonObject.getString("description");
 
                 record = new Record();
@@ -50,7 +48,6 @@ class JsonAdapter {
                 record.setTitle(title);
                 record.setPriority(Integer.parseInt(priority));
                 record.setDate(stringToDate(date));
-                record.setDone(Boolean.parseBoolean(isDone));
                 record.setDescription(description);
 
                 records.add(record);
@@ -81,7 +78,6 @@ class JsonAdapter {
                 obj.put("title", record.getTitle());
                 obj.put("priority", record.getPriority().ordinal());
                 obj.put("date", record.getDate());
-                obj.put("isDone", record.isDone());
                 obj.put("description", record.getDescription());
             }
             catch (JSONException e) {
@@ -108,7 +104,7 @@ class JsonAdapter {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     context.openFileInput(FILENAME)));
-            String str = "";
+            String str;
             while ((str = br.readLine()) != null) {
                 result += str;
             }

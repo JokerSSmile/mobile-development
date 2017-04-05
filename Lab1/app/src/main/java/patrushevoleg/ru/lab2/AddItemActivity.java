@@ -61,7 +61,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
             showPicker.setText(bundle.getString("date"));
             addPriority.setSelection(bundle.getInt("priority"));
             addDescription.setText(bundle.getString("description"));
-            addItem.setText("Save");
+            addItem.setText(R.string.save);
             Date calendarDate = updateLabel(bundle.getString("date"));
             calendar = Calendar.getInstance();
             calendar.set(Calendar.DAY_OF_MONTH, calendarDate.getDay());
