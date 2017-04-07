@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(myToolbar);
 
         jsonAdapter = new JsonAdapter();
-        jsonAdapter.ParseJSON(this);
+        jsonAdapter.parseJSON(this);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         adapter = new RecyclerViewAdapter(jsonAdapter.getRecords(), this);

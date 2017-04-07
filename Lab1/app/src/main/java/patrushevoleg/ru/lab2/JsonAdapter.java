@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
@@ -27,7 +28,7 @@ class JsonAdapter {
         records = new ArrayList<>();
     }
 
-    void ParseJSON(Context context) {
+    void parseJSON(Context context) {
 
         try {
             JSONObject obj = new JSONObject(getDataFromFile(context));
@@ -86,23 +87,33 @@ class JsonAdapter {
             recipes.put(obj);
         }
 
+        BufferedWriter bw = null;
         try {
             String stringToSave = "{\"recipes\":" + recipes + "}";
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(FILENAME, Context.MODE_PRIVATE)));
+            bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(FILENAME, Context.MODE_PRIVATE)));
             bw.write(stringToSave);
-            bw.close();
         }
         catch (Exception e) {
             Toast toast = Toast.makeText(context, "Can not write data file!", Toast.LENGTH_SHORT);
             toast.show();
+        }
+        finally {
+            if (bw != null) {
+                try {
+                    bw.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
     }
 
     private String getDataFromFile(Context context) {
         String result = "";
 
+        BufferedReader br = null;
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(
+            br = new BufferedReader(new InputStreamReader(
                     context.openFileInput(FILENAME)));
             String str;
             while ((str = br.readLine()) != null) {
@@ -113,6 +124,14 @@ class JsonAdapter {
             Toast toast = Toast.makeText(context, "Can not load data file!", Toast.LENGTH_SHORT);
             toast.show();
             return null;
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
 
         return result;
