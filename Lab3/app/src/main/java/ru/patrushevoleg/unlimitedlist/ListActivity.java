@@ -77,8 +77,8 @@ public class ListActivity extends AppCompatActivity {
         recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int current_page) {
-                final List<String> postsText = new ArrayList<>();
-                VKRequest request = VKApi.wall().get(VKParameters.from(VKApiConst.OWNER_ID, -52833601, VKApiConst.EXTENDED, 1, VKApiConst.OFFSET, adapter.getItemCount(), VKApiConst.COUNT, 10));
+                final List<PostEntity> postsText = new ArrayList<>();
+                VKRequest request = VKApi.wall().get(VKParameters.from(VKApiConst.OWNER_ID, -29506463, VKApiConst.EXTENDED, 1, VKApiConst.OFFSET, adapter.getItemCount(), VKApiConst.COUNT, 15));
                 request.executeWithListener(new VKRequest.VKRequestListener() {
                     @Override
                     public void onComplete(VKResponse response) {
@@ -86,7 +86,7 @@ public class ListActivity extends AppCompatActivity {
                         VKList<VKApiPost> posts = (VKList<VKApiPost>) response.parsedModel;
                         for (VKApiPost post : posts) {
                             if (!post.text.contains("club") && !Objects.equals(post.text, "")) {
-                                postsText.add(post.text);
+                                postsText.add(new PostEntity(post.text, post.date));
                             }
                         }
                         adapter.addItems(postsText);
@@ -107,9 +107,9 @@ public class ListActivity extends AppCompatActivity {
 
     private void firstLoadData() {
 
-        final List<String> postsText = new ArrayList<>();
+        final List<PostEntity> postsText = new ArrayList<>();
 
-        VKRequest request = VKApi.wall().get(VKParameters.from(VKApiConst.OWNER_ID, -52833601, VKApiConst.EXTENDED, 1, VKApiConst.OFFSET, 1, VKApiConst.COUNT, 10));
+        VKRequest request = VKApi.wall().get(VKParameters.from(VKApiConst.OWNER_ID, -29506463, VKApiConst.EXTENDED, 1, VKApiConst.OFFSET, 1, VKApiConst.COUNT, 15));
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -117,7 +117,7 @@ public class ListActivity extends AppCompatActivity {
                 VKList<VKApiPost> posts = (VKList<VKApiPost>) response.parsedModel;
                 for (VKApiPost post : posts) {
                     if (!post.text.contains("club") && !Objects.equals(post.text, "")) {
-                        postsText.add(post.text);
+                        postsText.add(new PostEntity(post.text, post.date));
                     }
                 }
                 adapter.addItems(postsText);

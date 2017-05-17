@@ -11,11 +11,7 @@ import java.util.List;
 
 class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
-    private List<String> posts;
-
-    ListAdapter(List<String> records) {
-        this.posts = records;
-    }
+    private List<PostEntity> posts;
 
     ListAdapter() {
         this.posts = new ArrayList<>();
@@ -29,7 +25,7 @@ class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String record = posts.get(position);
+        String record = posts.get(position).text;
 
         holder.text.setText(record);
     }
@@ -39,11 +35,11 @@ class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         return posts.size();
     }
 
-    public void addItems(List<String> items) {
+    public void addItems(List<PostEntity> items) {
         posts.addAll(items);
     }
 
-    public List<String> getPosts() {
+    public List<PostEntity> getPosts() {
         return posts;
     }
 

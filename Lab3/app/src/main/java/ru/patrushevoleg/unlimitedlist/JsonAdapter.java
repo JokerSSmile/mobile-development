@@ -18,9 +18,9 @@ import java.util.List;
 public class JsonAdapter {
 
     private static final String FILENAME = "vkposts.json";
-    private List<String> posts;
+    private List<PostEntity> posts;
 
-    public List<String> GetSavedPosts() {
+    public List<PostEntity> GetSavedPosts() {
         return posts;
     }
 
@@ -60,12 +60,14 @@ public class JsonAdapter {
             JSONObject obj = new JSONObject(getDataFromFile(context));
 
             JSONArray m_jArry = obj.getJSONArray("posts");
-            String post;
+            //String post;
 
             for (int i = 0; i < m_jArry.length(); i++) {
                 JSONObject jsonObject = m_jArry.getJSONObject(i);
+                String text = jsonObject.getString("post");
+                String date = jsonObject.getString("date");
 
-                posts.add(jsonObject.getString("post"));
+                posts.add(new PostEntity(text, Long.parseLong(date)));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,13 +76,14 @@ public class JsonAdapter {
         }
     }
 
-    void saveData(Context context, List<String> posts) {
+    void saveData(Context context, List<PostEntity> posts) {
         JSONArray recipes = new JSONArray();
 
-        for (String post : posts) {
+        for (PostEntity post : posts) {
             JSONObject obj = new JSONObject();
             try {
-                obj.put("post", post);
+                obj.put("post", post.text);
+                obj.put("date", post.date);
             }
             catch (JSONException e) {
                 e.printStackTrace();
