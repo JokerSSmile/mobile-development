@@ -54,7 +54,11 @@ public class ListActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        jsonAdapter.saveData(this, adapter.getPosts());
+        new Thread(new Runnable() {
+            public void run() {
+                jsonAdapter.saveData(ListActivity.super.getBaseContext(), adapter.getPosts());
+            }
+        }).start();
     }
 
     @Override
