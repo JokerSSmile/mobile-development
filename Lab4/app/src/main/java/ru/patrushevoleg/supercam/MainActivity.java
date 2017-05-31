@@ -50,10 +50,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == TAKE_PICTURE) {
-            setPictureToImage();
-            galleryAddPic();
+
+        if (resultCode == 0) {
+            return;
         }
+        setPictureToImage();
+        galleryAddPic();
     }
 
     private void setPictureToImage() {
