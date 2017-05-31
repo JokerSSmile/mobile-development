@@ -3,6 +3,7 @@ package ru.patrushevoleg.unlimitedlist;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -54,11 +55,13 @@ public class ListActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        new Thread(new Runnable() {
-            public void run() {
-                jsonAdapter.saveData(ListActivity.super.getBaseContext(), adapter.getPosts());
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                jsonAdapter.saveData(getBaseContext(), adapter.getPosts());
+                return null;
             }
-        }).start();
+        }.execute();
     }
 
     @Override
